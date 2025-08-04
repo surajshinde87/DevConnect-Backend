@@ -19,11 +19,7 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
-    private String bio;
-
     private String location;
-
     private String profileImage;
 
     private LocalDateTime createdAt;
@@ -37,7 +33,6 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.bio = bio;
         this.location = location;
         this.profileImage = profileImage;
         this.createdAt = LocalDateTime.now();
@@ -76,13 +71,6 @@ public class User {
         this.password = password;
     }
 
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
 
     public String getLocation() {
         return location;

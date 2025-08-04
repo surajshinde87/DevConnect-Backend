@@ -1,12 +1,14 @@
-package com.devconnect.devconnect.service;
-
-import com.devconnect.devconnect.model.User;
-import com.devconnect.devconnect.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+package com.devconnect.devconnect.serviceImpl;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.devconnect.devconnect.model.User;
+import com.devconnect.devconnect.repository.UserRepository;
+import com.devconnect.devconnect.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,7 +39,6 @@ public class UserServiceImpl implements UserService {
             user.setName(userDetails.getName());
             user.setEmail(userDetails.getEmail());
             user.setPassword(userDetails.getPassword());
-            user.setBio(userDetails.getBio());
             user.setLocation(userDetails.getLocation());
             user.setProfileImage(userDetails.getProfileImage());
             return userRepository.save(user);
