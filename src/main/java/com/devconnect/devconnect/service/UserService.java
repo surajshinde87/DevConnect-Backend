@@ -9,4 +9,6 @@ public interface UserService {
     User createUser(User user);
     User updateUser(Long id, User user);
     void deleteUser(Long id);
+    String followUser(Long followerId, Long followeeId);
+String unfollowUser(Long followerId, Long followeeId);
 }

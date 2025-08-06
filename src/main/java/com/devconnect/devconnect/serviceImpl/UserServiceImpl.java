@@ -42,13 +42,48 @@ public class UserServiceImpl implements UserService {
             user.setLocation(userDetails.getLocation());
             user.setProfileImage(userDetails.getProfileImage());
             return userRepository.save(user);
-        } else {
-            return null;
         }
+        return null;
     }
 
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+  @Override
+public String followUser(Long followerId, Long followeeId) {
+    User follower = userRepository.findById(followerId)
+        .orElseThrow(() -> new RuntimeException("Follower not found"));
+    User followee = userRepository.findById(followeeId)
+        .orElseThrow(() -> new RuntimeException("Followee not found"));
+
+    // Logic to follow
+    follower.getFollowing().add(followee);
+    followee.getFollowers().add(follower);
+    userRepository.save(follower);
+    userRepository.save(followee);
+
+    // Return custom message
+    return "You started following " + followee.getName() + ";;" +
+           follower.getName() + " started following you";
+}
+
+@Override
+public String unfollowUser(Long followerId, Long followeeId) {
+    User follower = userRepository.findById(followerId)
+        .orElseThrow(() -> new RuntimeException("Follower not found"));
+    User followee = userRepository.findById(followeeId)
+        .orElseThrow(() -> new RuntimeException("Followee not found"));
+
+    // Logic to unfollow
+    follower.getFollowing().remove(followee);
+    followee.getFollowers().remove(follower);
+    userRepository.save(follower);
+    userRepository.save(followee);
+
+    return "You unfollowed " + followee.getName() + ";;" +
+           follower.getName() + " unfollowed you";
+}
+
 }

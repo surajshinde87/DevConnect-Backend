@@ -1,7 +1,10 @@
 package com.devconnect.devconnect.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
@@ -19,17 +22,30 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
     private String location;
     private String profileImage;
 
     private LocalDateTime createdAt;
 
-    // Constructors
+    // Following: users THIS user is following
+    @ManyToMany
+    @JoinTable(
+        name = "user_following",
+        joinColumns = @JoinColumn(name = "follower_id"),
+        inverseJoinColumns = @JoinColumn(name = "following_id")
+    )
+    private Set<User> following = new HashSet<>();
+
+    // Followers: users who follow THIS user
+    @ManyToMany(mappedBy = "following")
+    private Set<User> followers = new HashSet<>();
+
     public User() {
         this.createdAt = LocalDateTime.now();
     }
 
-    public User(String name, String email, String password, String bio, String location, String profileImage) {
+    public User(String name, String email, String password, String location, String profileImage) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -38,13 +54,15 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -53,6 +71,10 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -71,7 +93,6 @@ public class User {
         this.password = password;
     }
 
-
     public String getLocation() {
         return location;
     }
@@ -88,16 +109,27 @@ public class User {
         this.profileImage = profileImage;
     }
 
-   @PrePersist
-   public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<User> followers) {
+        this.followers = followers;
+    }
+
+    public Set<User> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<User> following) {
+        this.following = following;
     }
 }
