@@ -1,0 +1,67 @@
+package com.devconnect.devconnect.serviceImpl;
+
+import com.devconnect.devconnect.dto.*;
+import com.devconnect.devconnect.model.User;
+import com.devconnect.devconnect.repository.UserRepository;
+import com.devconnect.devconnect.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class AuthServiceImpl implements AuthService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private UserResponseDto mapToResponse(User user) {
+        UserResponseDto dto = new UserResponseDto();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setLocation(user.getLocation());
+        dto.setProfileImage(user.getProfileImage());
+        return dto;
+    }
+
+    @Override
+    public UserResponseDto register(UserRegisterDto userDto) {
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already registered");
+        }
+        User user = new User(
+                userDto.getName(),
+                userDto.getEmail(),
+                userDto.getPassword(), 
+                userDto.getLocation(),
+                userDto.getProfileImage()
+        );
+        User savedUser = userRepository.save(user);
+        return mapToResponse(savedUser);
+    }
+
+    @Override
+    public UserResponseDto login(UserLoginDto loginDto) {
+        User user = userRepository.findByEmail(loginDto.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!user.getPassword().equals(loginDto.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+        return mapToResponse(user);
+    }
+
+    @Override
+    public UserResponseDto updateUser(Long userId, UserRegisterDto updateDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setName(updateDto.getName());
+        user.setEmail(updateDto.getEmail());
+        user.setPassword(updateDto.getPassword());
+        user.setLocation(updateDto.getLocation());
+        user.setProfileImage(updateDto.getProfileImage());
+
+        return mapToResponse(userRepository.save(user));
+    }
+}
